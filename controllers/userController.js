@@ -5,14 +5,17 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 var transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  // service: "gmail",
+  secure: true,
   auth: {
     user: "testdevnoreply8@gmail.com",
     pass: "test@7940",
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
+  // tls: {
+  //   rejectUnauthorized: false,
+  // },
 });
 
 // Register user - post request: (/api/users/register)
@@ -39,20 +42,6 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
     const newUser = await user.save();
 
-    if (newUser) {
-      res.status(201).json({
-        _id: newUser._id,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
-        token: generateToken(newUser._id),
-      });
-    } else {
-      return res.status(400).send({
-        message: `Error occured`,
-      });
-    }
-
     let verificationUrl = `http://${req.headers.host}/api/users/verify-email/${user.emailToken}`;
     // verification email template
     var mailOptions = {
@@ -61,9 +50,17 @@ const registerUser = asyncHandler(async (req, res, next) => {
       subject: "Splash URL shortner - verify your email",
       html: `<h2>${user.firstName}! Thanks for registering on our application</h2>
          <h4>Please verify your email to continue...</h4>
-         <a href=${verificationUrl}>http://localhost:4000/api/users/verify-email/${user.emailToken}</a>
+         <a href=${verificationUrl}>Verify your email</a>
          `,
     };
+
+    transporter.verify(function (error, success) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("server is ready to send emails");
+      }
+    });
 
     // sending email
     transporter.sendMail(mailOptions, function (error, info) {
@@ -73,6 +70,18 @@ const registerUser = asyncHandler(async (req, res, next) => {
         console.log("Verfication email is sent");
       }
     });
+
+    // if (newUser) {
+    //   res.status(201).json({
+    //     isVerified: newUser.isVerified,
+    //   });
+    // } else {
+    //   return res.status(400).send({
+    //     message: `Error occured`,
+    //   });
+    // }
+
+    res.status(201).json("User created");
   } catch (error) {
     res.status(500).json({
       message: `Server error- ${error.message}`,

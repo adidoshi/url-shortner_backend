@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
     const newUser = await user.save();
 
-    let verificationUrl = `http://${req.headers.host}/api/users/verify-email/${user.emailToken}`;
+    let verificationUrl = `https://splashshort.herokuapp.com/api/users/verify-email/${user.emailToken}`;
     // verification email template
     var mailOptions = {
       from: process.env.EMAIL_FORM,
@@ -57,16 +57,6 @@ const registerUser = asyncHandler(async (req, res, next) => {
       }
     });
 
-    // if (newUser) {
-    //   res.status(201).json({
-    //     isVerified: newUser.isVerified,
-    //   });
-    // } else {
-    //   return res.status(400).send({
-    //     message: `Error occured`,
-    //   });
-    // }
-
     res.status(201).json("User created");
   } catch (error) {
     res.status(500).json({
@@ -79,13 +69,15 @@ const verifyEmail = asyncHandler(async (req, res) => {
   try {
     const token = req.params.token;
     const user = await User.findOne({ emailToken: token });
-    // console.log(token);
+    console.log(token);
 
     if (user) {
       user.emailToken = null;
       user.isVerified = true;
       await user.save();
-      res.status(200).json("Email verified");
+      res.send(
+        "<h3>Email Id verified successfully. You can proceed to login into your account now.</h3> \n <a href='http://localhost:3000/'>Login</a>"
+      );
     } else {
       res.status(400).json("Email Id not verified");
     }
@@ -102,6 +94,12 @@ const loginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
+
+    if (user.isVerified === false) {
+      return res
+        .status(400)
+        .json("Account is not verified yet. Check your inbox.");
+    }
     if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,

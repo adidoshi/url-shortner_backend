@@ -5,13 +5,10 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 var transporter = nodemailer.createTransport({
-  host: process.env.SMPT_HOST,
-  port: process.env.SMPT_PORT,
-  service: process.env.SMPT_SERVICE,
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    // SMPT - Simple mail transfer protocol
-    user: process.env.SMPT_MAIL,
-    pass: process.env.SMPT_PASSWORD,
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -42,7 +39,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     let verificationUrl = `http://${req.headers.host}/api/users/verify-email/${user.emailToken}`;
     // verification email template
     var mailOptions = {
-      from: process.env.SMPT_MAIL,
+      from: process.env.EMAIL_FORM,
       to: user.email,
       subject: "Splash URL shortner - verify your email",
       html: `<h2>${user.firstName}! Thanks for registering on our application</h2>
@@ -50,14 +47,6 @@ const registerUser = asyncHandler(async (req, res, next) => {
          <a href=${verificationUrl}>Verify your email</a>
          `,
     };
-
-    // transporter.verify(function (error, success) {
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     console.log("server is ready to send emails");
-    //   }
-    // });
 
     // sending email
     transporter.sendMail(mailOptions, function (error, info) {

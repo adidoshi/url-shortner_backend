@@ -5,17 +5,14 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 var transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  // service: "gmail",
-  secure: true,
+  host: process.env.SMPT_HOST,
+  port: process.env.SMPT_PORT,
+  service: process.env.SMPT_SERVICE,
   auth: {
-    user: "testdevnoreply8@gmail.com",
-    pass: "test@7940",
+    // SMPT - Simple mail transfer protocol
+    user: process.env.SMPT_MAIL,
+    pass: process.env.SMPT_PASSWORD,
   },
-  // tls: {
-  //   rejectUnauthorized: false,
-  // },
 });
 
 // Register user - post request: (/api/users/register)
@@ -45,7 +42,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     let verificationUrl = `http://${req.headers.host}/api/users/verify-email/${user.emailToken}`;
     // verification email template
     var mailOptions = {
-      from: '"Verify you email" <testdevnoreply8@gmail.com>',
+      from: process.env.SMPT_MAIL,
       to: user.email,
       subject: "Splash URL shortner - verify your email",
       html: `<h2>${user.firstName}! Thanks for registering on our application</h2>
@@ -54,13 +51,13 @@ const registerUser = asyncHandler(async (req, res, next) => {
          `,
     };
 
-    transporter.verify(function (error, success) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("server is ready to send emails");
-      }
-    });
+    // transporter.verify(function (error, success) {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log("server is ready to send emails");
+    //   }
+    // });
 
     // sending email
     transporter.sendMail(mailOptions, function (error, info) {

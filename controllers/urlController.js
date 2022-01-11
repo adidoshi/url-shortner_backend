@@ -2,11 +2,20 @@ const asyncHandler = require("express-async-handler");
 const ShortUrl = require("../models/ShortUrl");
 
 const shortUrl = asyncHandler(async (req, res) => {
-  const url = await ShortUrl.create({ full: req.body.fullUrl });
-  res.status(201).json({
-    message: "URL generated",
-    result: url,
-  });
+  const { urlname, fullUrl } = req.body;
+
+  if (!urlname || !fullUrl) {
+    return res.status(400).json("Please fill all the fields ");
+  } else {
+    const url = new ShortUrl({
+      user: req.user._id,
+      urlname,
+      fullUrl,
+    });
+
+    const generatedUrl = await url.save();
+    res.status(201).json(generatedUrl);
+  }
 });
 
 const getUrl = asyncHandler(async (req, res) => {

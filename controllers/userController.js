@@ -131,7 +131,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   // Get resetPassword Token
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
-  const resetPasswordUrl = `http://localhost:4000/api/users/password/reset/${resetToken}`;
+  const resetPasswordUrl = `http://localhost:3000/resetPass/${resetToken}`;
   var mailOptions = {
     from: '"Verify you email" <testdevnoreply8@gmail.com>',
     to: user.email,

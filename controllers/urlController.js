@@ -7,14 +7,8 @@ const shortUrl = asyncHandler(async (req, res) => {
   if (!urlName || !fullUrl) {
     return res.status(400).json("Please fill all the fields ");
   } else {
-    const url = new ShortUrl({
-      user: req.user._id,
-      urlName,
-      fullUrl,
-    });
-
-    const generatedUrl = await url.save();
-    res.status(201).json(generatedUrl);
+    const url = await ShortUrl.create({ user: req.user._id, urlName, fullUrl });
+    res.status(201).json(url);
   }
 });
 

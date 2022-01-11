@@ -11,10 +11,6 @@ const ShortUrlSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    full: {
-      type: String,
-      // required: true,
-    },
     short: {
       type: String,
       // required: true,

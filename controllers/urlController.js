@@ -33,7 +33,7 @@ const direct = asyncHandler(async (req, res) => {
 const userClicks = asyncHandler(async (req, res) => {
   const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl });
   const clickCount = shortUrl.clicks++;
-  shortUrl.save();
+  await shortUrl.save();
 
   res.status(200).json(clickCount);
 });

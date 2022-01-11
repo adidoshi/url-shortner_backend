@@ -21,7 +21,7 @@ connectDB();
 
 // Routes -
 app.use("/api/users", userRouter);
-app.use("/api/url", urlRouter);
+app.use("/", urlRouter);
 
 app.get("/", (req, res) => {
   res.json({

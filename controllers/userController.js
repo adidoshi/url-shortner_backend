@@ -76,7 +76,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
       user.isVerified = true;
       await user.save();
       res.send(
-        "<h3>Email Id verified successfully. You can proceed to login into your account now.</h3> \n <a href='http://localhost:3000/'>Login</a>"
+        "<h3>Email Id verified successfully. You can proceed to login into your account now.</h3> \n <a href='https://splashurlshortner.netlify.app'>Login</a>"
       );
     } else {
       res.status(400).json("Email Id not verified");
@@ -131,7 +131,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   // Get resetPassword Token
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
-  const resetPasswordUrl = `http://localhost:3000/resetPass/${resetToken}`;
+  const resetPasswordUrl = `https://splashurlshortner.netlify.app/resetPass/${resetToken}`;
   var mailOptions = {
     from: '"Verify you email" <testdevnoreply8@gmail.com>',
     to: user.email,

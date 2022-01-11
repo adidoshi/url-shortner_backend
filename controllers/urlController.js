@@ -2,14 +2,14 @@ const asyncHandler = require("express-async-handler");
 const ShortUrl = require("../models/ShortUrl");
 
 const shortUrl = asyncHandler(async (req, res) => {
-  const { urlname, fullUrl } = req.body;
+  const { urlName, fullUrl } = req.body;
 
-  if (!urlname || !fullUrl) {
+  if (!urlName || !fullUrl) {
     return res.status(400).json("Please fill all the fields ");
   } else {
     const url = new ShortUrl({
       user: req.user._id,
-      urlname,
+      urlName,
       fullUrl,
     });
 
@@ -19,7 +19,7 @@ const shortUrl = asyncHandler(async (req, res) => {
 });
 
 const getUrl = asyncHandler(async (req, res) => {
-  const shortUrls = await ShortUrl.find();
+  const shortUrls = await ShortUrl.find({ user: req.user._id });
   res.status(200).json(shortUrls);
 });
 
@@ -28,7 +28,7 @@ const direct = asyncHandler(async (req, res) => {
 
   if (shortUrl == null) return res.status(404).json(`Invalid url entered`);
 
-  res.redirect(shortUrl.full);
+  res.redirect(shortUrl.fullUrl);
 });
 
 const userClicks = asyncHandler(async (req, res) => {

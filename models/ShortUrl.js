@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { nanoid } = require("nanoid");
-const crypto = require("crypto");
 
 const ShortUrlSchema = new mongoose.Schema(
   {

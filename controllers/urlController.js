@@ -38,4 +38,19 @@ const userClicks = asyncHandler(async (req, res) => {
   res.status(200).json(clickCount);
 });
 
-module.exports = { shortUrl, getUrl, direct, userClicks };
+const deleteUrl = async (req, res) => {
+  const url = await ShortUrl.findById(req.params.id);
+
+  if (url.user.toString() !== req.user._id.toString()) {
+    return res.status(401).json("You can't perform this action");
+  }
+
+  if (url) {
+    await url.remove();
+    res.json({ message: "url Removed" });
+  } else {
+    res.status(404).json("url not Found");
+  }
+};
+
+module.exports = { shortUrl, getUrl, direct, userClicks, deleteUrl };
